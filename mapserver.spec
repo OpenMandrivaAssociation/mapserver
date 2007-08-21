@@ -1,13 +1,21 @@
+%define php php4
+%if %mdkversion < 200600
+%define php php
+%endif
+
+
 Name:		mapserver
-Version: 	4.10.0
-Release:        %mkrel 2
+Version: 	4.10.2
+Release:        %mkrel 1
 Summary:	Web-based Map Server
-Source:		http://cvs.gis.umn.edu/dist/%{name}-%{version}.tar.bz2
+Source:		http://download.osgeo.org/mapserver/mapserver-%{version}.tar.gz
 URL:		http://mapserver.gis.umn.edu/
 License:	MIT
 Group:		Sciences/Geosciences
 BuildRequires:	libproj-devel libgdal-devel php-devel curl-devel
 BuildRequires:	freetype2-devel gd-devel >= 2.0.12 webserver apache-mpm-prefork
+BuildRequires:	autoconf
+Patch:		mapserver-4.10.2-multiarch.patch
 Requires:	webserver
 BuildRoot:	%{_tmppath}/%{name}-%{version}-root
 
@@ -54,10 +62,12 @@ creating maps with php commands.
 
 %prep
 %setup -q
+%patch -p0 -b .multiarch
+autoconf
 
 %build
 %configure --with-proj --with-gdal --with-ogr --with-wms \
-	--with-php=/usr/include/php --without-tiff --with-threads \
+	--with-php=/usr/include/%php --without-tiff --with-threads \
 	--with-wfs --with-wcs --with-wmsclient --with-wfsclient \
 	--with-httpd=/usr/sbin/httpd
 perl -pi -e 's,/usr/local,\$(DESTDIR)/%{_prefix},g' Makefile
@@ -68,8 +78,8 @@ make
 %install
 mkdir -p %{buildroot}/%{_libdir}
 mkdir -p %{buildroot}/%{_includedir}/%{name}-4.6
-mkdir -p %{buildroot}/%{_libdir}/php/extensions
-mkdir -p %{buildroot}/%{_sysconfdir}/php.d/
+mkdir -p %{buildroot}/%{_libdir}/%{php}/extensions
+mkdir -p %{buildroot}/%{_sysconfdir}/%{php}.d/
 
 cat > 40_mapscript.ini <<EOF
 extension = php_mapscript.so
@@ -81,8 +91,8 @@ install -d %{buildroot}/%{_var}/www/cgi-bin
 install -d %{buildroot}/%{_var}/www/html/mapserver/tmp
 install -m755 mapserv shp2img shp2pdf legend shptree shptreevis \
  shptreetst scalebar sortshp tile4ms %{buildroot}/%{_var}/www/cgi-bin
-install -m755 mapscript/php3/php_mapscript.so %{buildroot}/%{_libdir}/php/extensions
-install -m755 40_mapscript.ini %{buildroot}/%{_sysconfdir}/php.d/
+install -m755 mapscript/php3/php_mapscript.so %{buildroot}/%{_libdir}/%{php}/extensions
+install -m755 40_mapscript.ini %{buildroot}/%{_sysconfdir}/%{php}.d/
 
 %post php
 %{_post_webapp}
@@ -101,8 +111,8 @@ install -m755 40_mapscript.ini %{buildroot}/%{_sysconfdir}/php.d/
 
 %files php
 %defattr(-,root,root)
-%{_sysconfdir}/php.d/40_mapscript.ini
-%{_libdir}/php/extensions/*
+%{_sysconfdir}/%{php}.d/40_mapscript.ini
+%{_libdir}/%{php}/extensions/*
 
 %clean
 rm -Rf %{buildroot}
