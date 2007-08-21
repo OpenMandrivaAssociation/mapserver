@@ -15,6 +15,7 @@ Group:		Sciences/Geosciences
 BuildRequires:	libproj-devel libgdal-devel %{php}-devel curl-devel
 BuildRequires:	freetype2-devel gd-devel >= 2.0.12 webserver apache-mpm-prefork
 BuildRequires:	autoconf
+BuildRequires:	netcdf-devel
 Patch:		mapserver-4.10.2-multiarch.patch
 Requires:	webserver
 BuildRoot:	%{_tmppath}/%{name}-%{version}-root
