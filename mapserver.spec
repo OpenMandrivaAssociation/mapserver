@@ -20,7 +20,6 @@ BuildRequires: cfitsio-devel
 BuildRequires: postgis-devel
 Patch0: mapserver-4.10.2-multiarch.patch
 Requires: webserver
-BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
 MapServer is an  OpenSource development environment for building spatially 
