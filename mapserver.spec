@@ -19,6 +19,8 @@ BuildRequires: autoconf
 BuildRequires: netcdf-devel
 BuildRequires: cfitsio-devel
 BuildRequires: postgis-devel
+BuildRequires: geos-devel
+BuildRequires: ming-devel
 Patch0: mapserver-4.10.2-multiarch.patch
 Requires: webserver
 
@@ -88,6 +90,8 @@ autoreconf
     --with-wcs \
     --with-wmsclient \
     --with-wfsclient \
+    --with-png \
+    --with-geos \
 	--with-httpd=%_prefix/sbin/httpd
 
 perl -pi -e 's,/usr/local,\$(DESTDIR)/%{_prefix},g' Makefile
