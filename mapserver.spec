@@ -1,5 +1,5 @@
 Name: mapserver
-Version: 5.0.2
+Version: 5.0.3
 Release: %mkrel 1
 Summary: Web-based Map Server
 Source: http://download.osgeo.org/mapserver/mapserver-%{version}.tar.gz
@@ -97,8 +97,8 @@ perl -pi -e 's,/usr/local,\$(DESTDIR)/%{_prefix},g' Makefile
 %install
 mkdir -p %{buildroot}/%{_libdir}
 mkdir -p %{buildroot}/%{_includedir}/%{name}-4.6
-mkdir -p %{buildroot}/%{_libdir}/%{php}/extensions
-mkdir -p %{buildroot}/%{_sysconfdir}/%{php}.d/
+mkdir -p %{buildroot}/%{_libdir}/php/extensions
+mkdir -p %{buildroot}/%{_sysconfdir}/php.d/
 
 cat > 40_mapscript.ini <<EOF
 extension = php_mapscript.so
@@ -110,8 +110,8 @@ install -d %{buildroot}/%{_var}/www/cgi-bin
 install -d %{buildroot}/%{_var}/www/html/mapserver/tmp
 install -m755 mapserv shp2img shp2pdf legend shptree shptreevis \
  shptreetst scalebar sortshp tile4ms %{buildroot}/%{_var}/www/cgi-bin
-install -m755 mapscript/php3/php_mapscript.so %{buildroot}/%{_libdir}/%{php}/extensions
-install -m755 40_mapscript.ini %{buildroot}/%{_sysconfdir}/%{php}.d/
+install -m755 mapscript/php3/php_mapscript.so %{buildroot}/%{_libdir}/php/extensions
+install -m755 40_mapscript.ini %{buildroot}/%{_sysconfdir}/php.d/
 
 %post -n php-mapscript
 %{_post_webapp}
@@ -130,8 +130,8 @@ install -m755 40_mapscript.ini %{buildroot}/%{_sysconfdir}/%{php}.d/
 
 %files -n php-mapscript
 %defattr(-,root,root)
-%{_sysconfdir}/%{php}.d/40_mapscript.ini
-%{_libdir}/%{php}/extensions/*
+%{_sysconfdir}/php.d/40_mapscript.ini
+%{_libdir}/php/extensions/*
 
 %clean
 rm -Rf %{buildroot}
