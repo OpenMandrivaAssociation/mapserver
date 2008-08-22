@@ -1,6 +1,6 @@
 Name: mapserver
-Version: 5.0.3
-Release: %mkrel 3
+Version: 5.2.0
+Release: %mkrel 1
 Summary: Web-based Map Server
 Source: http://download.osgeo.org/mapserver/mapserver-%{version}.tar.gz
 URL: http://mapserver.gis.umn.edu/
@@ -77,7 +77,7 @@ creating maps with php commands.
 autoreconf
 
 %build
-%configure \
+%configure2_5x \
     --with-proj \
     --with-gdal \
     --with-ogr \
