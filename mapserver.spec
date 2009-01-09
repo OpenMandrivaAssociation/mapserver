@@ -1,5 +1,5 @@
 Name: mapserver
-Version: 5.2.0
+Version: 5.2.1
 Release: %mkrel 1
 Summary: Web-based Map Server
 Source: http://download.osgeo.org/mapserver/mapserver-%{version}.tar.gz
@@ -21,7 +21,9 @@ BuildRequires: cfitsio-devel
 BuildRequires: postgis-devel
 BuildRequires: geos-devel
 BuildRequires: ming-devel
+BuildRequires: shapelib-devel
 Patch0: mapserver-4.10.2-multiarch.patch
+Patch1: mapserver-format-not-a-string-literal.patch
 Requires: webserver
 
 %description
@@ -73,7 +75,8 @@ creating maps with php commands.
 
 %prep
 %setup -q
-%patch -p0 -b .multiarch
+%patch0 -p0 -b .multiarch
+%patch1 -p1 -b .format-not-a-string-literal
 autoreconf
 
 %build
