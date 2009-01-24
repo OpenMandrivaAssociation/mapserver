@@ -7,7 +7,7 @@ URL: http://mapserver.gis.umn.edu/
 License: MIT
 Group: Sciences/Geosciences
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
-BuildRequires: libproj-devel 
+BuildRequires: proj-devel 
 BuildRequires: libgdal-devel 
 BuildRequires: php-devel 
 BuildRequires: curl-devel
