@@ -1,6 +1,6 @@
 Name: mapserver
 Version: 5.2.1
-Release: %mkrel 3
+Release: %mkrel 4
 Summary: Web-based Map Server
 Source: http://download.osgeo.org/mapserver/mapserver-%{version}.tar.gz
 URL: http://mapserver.gis.umn.edu/
