@@ -99,7 +99,7 @@ autoreconf
 
 perl -pi -e 's,/usr/local,\$(DESTDIR)/%{_prefix},g' Makefile
 
-%make
+%__make
 
 %install
 mkdir -p %{buildroot}/%{_libdir}
