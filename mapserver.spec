@@ -22,6 +22,7 @@ BuildRequires: postgis-devel
 BuildRequires: geos-devel
 BuildRequires: ming-devel
 BuildRequires: shapelib-devel
+BuildRequires: readline-devel
 Patch0: mapserver-4.10.2-multiarch.patch
 Patch1: mapserver-format-not-a-string-literal.patch
 Requires: webserver
