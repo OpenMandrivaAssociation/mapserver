@@ -18,7 +18,7 @@ BuildRequires: apache-mpm-prefork
 BuildRequires: autoconf
 BuildRequires: netcdf-devel
 BuildRequires: cfitsio-devel
-BuildRequires: postgis-devel
+BuildRequires: postgresql-devel
 BuildRequires: geos-devel
 BuildRequires: ming-devel
 BuildRequires: shapelib-devel
