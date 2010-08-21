@@ -1,6 +1,6 @@
 Name: mapserver
 Version: 5.6.5
-Release: %mkrel 1
+Release: %mkrel 2
 Summary: Web-based Map Server
 Source: http://download.osgeo.org/mapserver/mapserver-%{version}.tar.gz
 URL: http://mapserver.gis.umn.edu/
@@ -25,6 +25,7 @@ BuildRequires: shapelib-devel
 BuildRequires: readline-devel
 Patch0: mapserver-4.10.2-multiarch.patch
 Patch1: mapserver-format-not-a-string-literal.patch
+Patch2: mapserver-5.6.5-linkage.patch
 Requires: webserver
 
 %description
@@ -72,15 +73,15 @@ Requires: curl
 php-mapscript allows you to have mapserver functions from within php,
 creating maps with php commands.
 
-
-
 %prep
 %setup -q
 %patch0 -p0 -b .multiarch
 %patch1 -p1 -b .format-not-a-string-literal
+%patch2 -p0 -b .link
 autoreconf
 
 %build
+%define _disable_ld_no_undefined 1
 %configure2_5x \
     --with-proj \
     --with-gdal \
@@ -100,9 +101,10 @@ autoreconf
 
 perl -pi -e 's,/usr/local,\$(DESTDIR)/%{_prefix},g' Makefile
 
-%__make
+make
 
 %install
+rm -fr %buildroot
 mkdir -p %{buildroot}/%{_libdir}
 mkdir -p %{buildroot}/%{_includedir}/%{name}-4.6
 mkdir -p %{buildroot}/%{_libdir}/php/extensions
