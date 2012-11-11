@@ -1,0 +1,26 @@
+--- Makefile.in.link	2010-08-21 10:03:05.000000000 +0200
++++ Makefile.in	2010-08-21 10:03:31.000000000 +0200
+@@ -263,7 +263,7 @@
+ # STATIC_LIBS is full filename with path of libs that will be statically linked
+ STATIC_LIBS= $(GD_STATIC)
+ 
+-EXE_LDFLAGS =	$(RUNPATHS) -L. -lmapserver $(SUP_LIBS) $(STATIC_LIBS)
++EXE_LDFLAGS =	$(RUNPATHS) $(LDFLAGS) -L. -lmapserver $(SUP_LIBS) $(STATIC_LIBS)
+ 
+ RM= /bin/rm -f
+ 
+--- mapscript/php3/Makefile.in.link	2010-08-21 10:09:11.000000000 +0200
++++ mapscript/php3/Makefile.in	2010-08-21 10:09:47.000000000 +0200
+@@ -85,10 +85,10 @@
+ 
+ 
+ php_mapscript.so: $(PHPMS_OBJS) ../../libmapserver.a
+-	$(LD) -o $@ $(PHPMS_OBJS) $(MS_LIBS)
++	$(LD) $(LDFLAGS) -o $@ $(PHPMS_OBJS) $(MS_LIBS)
+ 
+ php_proj.so:  $(PHPPROJ_OBJS)
+-	$(LD) -o $@ $(PHPPROJ_OBJS) $(MS_LIBS)
++	$(LD) $(LDFLAGS) -o $@ $(PHPPROJ_OBJS) $(MS_LIBS)
+ 
+ %.o: %.c php_mapscript_util.h php_mapscript.h
+ 	$(CC) $(CFLAGS112) -c -o $@ $<

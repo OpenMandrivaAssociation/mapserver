@@ -1,0 +1,11 @@
+--- configure.in.orig	2007-01-11 00:51:59.000000000 +0200
++++ configure.in	2007-08-21 09:22:58.000000000 +0200
+@@ -1946,7 +1948,7 @@
+   dnl Default is PHP3, and if ZEND_API is set then we assume that we have PHP4.
+   dnl
+   AC_MSG_CHECKING([whether we have PHP3 or PHP4])
+-  if test -n "`grep 'ZEND_API' $PHP_CONFIG_H`"  ; then
++  if test -n "`cpp -dD $PHP_CONFIG_H|grep 'ZEND_API'`"  ; then
+     PHP_VERSION_FLAG="-DPHP4"
+   else
+     PHP_VERSION_FLAG="-DPHP3"
