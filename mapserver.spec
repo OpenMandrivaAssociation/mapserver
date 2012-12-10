@@ -1,12 +1,11 @@
 Name: mapserver
-Version: 5.6.6
-Release: %mkrel 3
+Version: 6.2.0
+Release: 1
 Summary: Web-based Map Server
-Source: http://download.osgeo.org/mapserver/mapserver-%{version}.tar.gz
-URL: http://mapserver.gis.umn.edu/
+Source0: http://download.osgeo.org/mapserver/%{name}-%{version}.tar.gz
+URL: http://mapserver.org/
 License: MIT
 Group: Sciences/Geosciences
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires: proj-devel 
 BuildRequires: libgdal-devel 
 BuildRequires: php-devel 
@@ -23,9 +22,8 @@ BuildRequires: geos-devel
 BuildRequires: ming-devel
 BuildRequires: shapelib-devel
 BuildRequires: readline-devel
-Patch0: mapserver-4.10.2-multiarch.patch
-Patch1: mapserver-format-not-a-string-literal.patch
-Patch2: mapserver-5.6.5-linkage.patch
+BuildRequires: pkgconfig(ftgl)
+BuildRequires: pkgconfig(libsvg-cairo)
 Requires: webserver
 
 %description
@@ -63,8 +61,8 @@ to content.
 Group: Sciences/Geosciences
 Summary: Mapserver php-mapscript
 Obsoletes: mapserver-php < 4.10.3
-Provides: mapscript = %version
-Provides: mapserver-php = %version
+Provides: mapscript = %{EVRD}
+Provides: mapserver-php = %{EVRD}
 Requires: php 
 Requires: libgdal 
 Requires: curl
@@ -73,38 +71,44 @@ Requires: curl
 php-mapscript allows you to have mapserver functions from within php,
 creating maps with php commands.
 
+%package devel
+Summary: Mapserver development files
+
+%description devel
+Development files for %{name}.
+
 %prep
 %setup -q
-%patch0 -p0 -b .multiarch
-%patch1 -p1 -b .format-not-a-string-literal
-%patch2 -p0 -b .link
-autoreconf
 
 %build
-%define _disable_ld_no_undefined 1
 %configure2_5x \
     --with-proj \
     --with-gdal \
     --with-ogr \
     --with-wms \
-	--with-php=%_prefix \
+    --with-php=%{_bindir}/php-config \
     --without-tiff \
     --with-threads \
     --with-postgis \
-	--with-wfs \
+    --with-wfs \
     --with-wcs \
     --with-wmsclient \
     --with-wfsclient \
     --with-png \
     --with-geos \
-	--with-httpd=%_prefix/sbin/httpd
+    --with-httpd=%{_sbindir}/httpd \
+    --with-kml \
+    --with-ftgl \
+    --with-opengl \
+    --with-mysql \
+    --with-cairo \
+    --with-libsvg-cairo \
+    --with-zlib \
+    --with-gd
 
-perl -pi -e 's,/usr/local,\$(DESTDIR)/%{_prefix},g' Makefile
-
-make
+%make
 
 %install
-rm -fr %buildroot
 mkdir -p %{buildroot}/%{_libdir}
 mkdir -p %{buildroot}/%{_includedir}/%{name}-4.6
 mkdir -p %{buildroot}/%{_libdir}/php/extensions
@@ -116,12 +120,22 @@ EOF
 
 %makeinstall_std
 
-install -d %{buildroot}/%{_var}/www/cgi-bin
+#install -d %{buildroot}/%{_var}/www/cgi-bin
 install -d %{buildroot}/%{_var}/www/html/mapserver/tmp
-install -m755 mapserv shp2img shp2pdf legend shptree shptreevis \
- shptreetst scalebar sortshp tile4ms %{buildroot}/%{_var}/www/cgi-bin
-install -m755 mapscript/php3/php_mapscript.so %{buildroot}/%{_libdir}/php/extensions
+
+#for file in mapserv shp2img legend shptree shptreevis \
+# shptreetst scalebar sortshp tile4ms msencrypt
+#do
+#mv %{buildroot}%{_bindir}/$file %{buildroot}/%{_var}/www/cgi-bin
+#done
+
 install -m755 40_mapscript.ini %{buildroot}/%{_sysconfdir}/php.d/
+
+for binary in mapserv shp2img legend shptree shptreevis \
+    shptreetst scalebar sortshp tile4ms msencrypt
+do
+    chrpath -d %{buildroot}%{_bindir}/$binary
+done
 
 %post -n php-mapscript
 %{_post_webapp}
@@ -131,19 +145,138 @@ install -m755 40_mapscript.ini %{buildroot}/%{_sysconfdir}/php.d/
 
 
 %files
-%defattr(-,root,root)
 %exclude %{_includedir}/*
-%{_var}/www/cgi-bin/*
+#%{_var}/www/cgi-bin/*
 %dir %{_var}/www/html/mapserver
 %attr(755,apache,apache) %{_var}/www/html/mapserver/tmp
 %doc INSTALL README HISTORY.TXT
+%{_libdir}/lib%{name}-%{version}.so
+%{_bindir}/legend
+%{_bindir}/mapserv
+%{_bindir}/msencrypt
+%{_bindir}/scalebar
+%{_bindir}/shp2img
+%{_bindir}/shptree
+%{_bindir}/shptreetst
+%{_bindir}/shptreevis
+%{_bindir}/sortshp
+%{_bindir}/tile4ms
 
 %files -n php-mapscript
-%defattr(-,root,root)
 %{_sysconfdir}/php.d/40_mapscript.ini
 %{_libdir}/php/extensions/*
 
-%clean
-rm -Rf %{buildroot}
+%files devel
+%{_libdir}/lib%{name}.so
+%{_bindir}/mapserver-config
 
+
+
+%changelog
+* Wed Aug 24 2011 Oden Eriksson <oeriksson@mandriva.com> 5.6.6-2mdv2012.0
++ Revision: 696387
+- rebuilt for php-5.3.8
+
+* Wed Apr 20 2011 Michael Scherer <misc@mandriva.org> 5.6.6-1
++ Revision: 656145
+- update to new version 5.6.6
+
+* Sat Aug 21 2010 Funda Wang <fwang@mandriva.org> 5.6.5-2mdv2011.0
++ Revision: 571655
+- fix linkage
+
+* Mon Aug 09 2010 Buchan Milne <bgmilne@mandriva.org> 5.6.5-1mdv2011.0
++ Revision: 567989
+- update to new version 5.6.5
+- Fix postgresql/postgis buildrequires
+
+* Fri Apr 23 2010 Buchan Milne <bgmilne@mandriva.org> 5.6.3-1mdv2010.1
++ Revision: 538157
+- buildrequire readline-devel
+- update to new version 5.6.3
+
+* Thu Oct 08 2009 Tomasz Pawel Gajc <tpg@mandriva.org> 5.2.1-6mdv2010.0
++ Revision: 455894
+- rebuild for new curl SSL backend
+
+* Mon Oct 05 2009 Guillaume Rousse <guillomovitch@mandriva.org> 5.2.1-5mdv2010.0
++ Revision: 454294
+- disable parallel build to fix build
+- rebuild for new libdap
+
+  + Thierry Vignaud <tv@mandriva.org>
+    - rebuild
+
+  + Raphaël Gertz <rapsys@mandriva.org>
+    - Rebuild
+
+* Sat Jan 24 2009 Funda Wang <fwang@mandriva.org> 5.2.1-2mdv2009.1
++ Revision: 333299
+- rebuild
+
+  + Buchan Milne <bgmilne@mandriva.org>
+    - New version 5.2.1
+    - Fix "format not a string literal"
+
+* Fri Aug 22 2008 Funda Wang <fwang@mandriva.org> 5.2.0-1mdv2009.0
++ Revision: 275025
+- New version 5.2.0
+
+  + Thierry Vignaud <tv@mandriva.org>
+    - rebuild
+
+  + Buchan Milne <bgmilne@mandriva.org>
+    - Enable ming and geos support
+    - New version 5.0.3
+
+* Mon Mar 03 2008 Buchan Milne <bgmilne@mandriva.org> 5.0.2-1mdv2008.1
++ Revision: 178226
+- New version 5.0.2
+
+  + Thierry Vignaud <tv@mandriva.org>
+    - fix no-buildroot-tag
+    - kill re-definition of %%buildroot on Pixel's request
+
+* Fri Aug 24 2007 Helio Chissini de Castro <helio@mandriva.com> 4.10.3-1mdv2008.0
++ Revision: 71038
+- New upstream version
+- mapscript builds against php 5 since 4.8
+- Added postgis support
+- Changed mapscript package name to match other php packages
+
+* Tue Aug 21 2007 Buchan Milne <bgmilne@mandriva.org> 4.10.2-1mdv2008.0
++ Revision: 68453
+- Buildrequire cfitsio-devel
+- Buildrequire netcdf-devel
+- Buildrequire php4-devel on recent distros
+- New version 4.10.2
+- Fix PHP detection (use cpp instead of grep) with multiarched headers
+
+
+* Sat Jan 27 2007 Emmanuel Andry <eandry@mandriva.org> 4.10.0-2mdv2007.0
++ Revision: 114441
+- buildrequires apache-mpm-prefork
+
+  + Nicolas Lécureuil <neoclust@mandriva.org>
+    - Rebuild against new curl
+
+  + David Walluck <walluck@mandriva.org>
+    - Import mapserver
+
+* Tue Oct 31 2006 Franck Martin <franck@sopac.org> 4.10.0-1mdk
+- New Release 4.10.0
+
+* Tue Sep 05 2006 Franck Martin <franck@sopac.org> 4.8.4-1mdk
+- New Release 4.8.4
+
+* Tue Sep 13 2005 Franck Martin <franck@sopac.org> 4.6.1-1mdk
+- New release 4.6.1
+
+* Thu Jul 21 2005 Franck Martin <franck@sopac.org> 4.6.0-1mdk
+- New release 4.6.0
+- includes php mapscript
+
+* Sun Jul 18 2004 Michael Scherer <misc@mandrake.org> 4.2.1-1mdk
+- New release 4.2.1
+- rpmbuildupdate aware
 
