@@ -1,0 +1,25 @@
+--- Makefile.in~	2013-04-20 12:08:49.000000000 +0800
++++ Makefile.in	2013-06-26 16:40:46.774105155 +0800
+@@ -239,7 +239,7 @@
+ RUNPATHS= -rpath $(libdir)
+ 
+ LT_LDFLAGS= $(RUNPATHS)
+-LINK=$(LTLD) $(LD) $(LT_LDFLAGS)
++LINK=$(LTLD) $(LD) $(LT_LDFLAGS) $(LDFLAGS)
+ 
+ DEFINES = @ALL_ENABLED@ 
+ 
+--- mapscript/php/Makefile.in.orig	2013-04-20 12:08:49.000000000 +0800
++++ mapscript/php/Makefile.in	2013-06-26 16:54:49.647071393 +0800
+@@ -86,9 +86,9 @@
+ MS_LIBS =   $(RUNPATHS) @MS_LIB@ @ALL_LIB@ @XTRALIBS@ $(MS_STATIC)
+ PHP_EXT_DIR=`$(PHPCONFIG) --extension-dir`
+ 
+-LT_LDFLAGS=-rpath $(PHP_EXT_DIR) -module
++LT_LDFLAGS=-rpath $(PHP_EXT_DIR) -module -avoid-version
+ OBJ_SUFFIX=lo
+-LINK=$(LTLD) $(LD) $(LT_LDFLAGS)
++LINK=$(LTLD) $(LD) $(LT_LDFLAGS) $(LDFLAGS)
+ MS_LIBS =   ../../libmapserver.la
+ 
+ MS_VERSION = @MS_VERSION@

@@ -1,0 +1,21 @@
+--- mapserver-6.2.1/configure.in~	2013-04-20 12:08:49.000000000 +0800
++++ mapserver-6.2.1/configure.in	2013-05-28 16:57:46.228908849 +0800
+@@ -507,8 +507,16 @@
+ 
+ 
+ 
+-      if test $GDMAJOR -lt 2 -o $GDMINOR -lt 0 -o $GDREV -lt 28 ; then
+-         AC_MSG_ERROR([GD version $GDVERSION too old. need at least 2.0.28])
++      if test $GDMAJOR -lt 2 ; then
++	 AC_MSG_ERROR([GD version $GDVERSION too old. need at least 2.0.28])
++      else
++	 if test $GDMAJOR -eq 2 -a $GDMINOR -lt 0 ; then
++	    AC_MSG_ERROR([GD version $GDVERSION too old. need at least 2.0.28])
++	 else
++            if test $GDMAJOR -eq 2 -a $GDMINOR -eq 0 -a $GDREV -lt 28 ; then
++               AC_MSG_ERROR([GD version $GDVERSION too old. need at least 2.0.28])
++	    fi
++	 fi
+       fi
+ 
+ 
