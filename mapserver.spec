@@ -4,7 +4,7 @@
 Summary:	Web-based Map Server
 Name:		mapserver
 Version:	6.2.1
-Release:	1
+Release:	2
 License:	MIT
 Group:		Sciences/Geosciences
 Url:		http://mapserver.org/
