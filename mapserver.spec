@@ -7,7 +7,7 @@ Version:	6.2.1
 Release:	2
 License:	MIT
 Group:		Sciences/Geosciences
-Url:		http://mapserver.org/
+Url:		https://mapserver.org/
 Source0:	http://download.osgeo.org/mapserver/%{name}-%{version}.tar.gz
 Patch0:		mapserver-6.2.1-link.patch
 Patch1:		mapserver-6.2.1-gdver.patch
